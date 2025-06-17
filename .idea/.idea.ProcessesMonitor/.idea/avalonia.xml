@@ -6,6 +6,7 @@
         <entry key="ProcessesMonitor/App.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
         <entry key="ProcessesMonitor/Views/MainWindow.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
         <entry key="ProcessesMonitor/Views/ProcessMonitorView.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
+        <entry key="ProcessesMonitor/Views/ProcessesMonitorView.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
         <entry key="ProcessesMonitor/Views/SettingsView.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
       </map>
     </option>

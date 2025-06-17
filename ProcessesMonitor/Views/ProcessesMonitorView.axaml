@@ -8,7 +8,10 @@
              x:DataType="viewModels:ProcessesMonitorViewModel">
     <StackPanel>
         <Button Content="Export to CSV" Command="{Binding ExportToCsvCommand}" HorizontalAlignment="Right" Margin="5"/>
-        <DataGrid ItemsSource="{Binding Processes, Mode=TwoWay}" AutoGenerateColumns="False" IsReadOnly="True">
+        <DataGrid 
+            ItemsSource="{Binding Processes, Mode=TwoWay}" 
+            AutoGenerateColumns="False" 
+            IsReadOnly="True">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Process Name" Binding="{Binding Name}" Width="*"/>
                 <DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="Auto"/>
