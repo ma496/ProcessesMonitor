@@ -7,4 +7,9 @@ public class DummyOsThemeService : IOsThemeService
     {
         // Do nothing
     }
+
+    public bool IsLightTheme()
+    {
+        throw new System.NotImplementedException();
+    }
 }

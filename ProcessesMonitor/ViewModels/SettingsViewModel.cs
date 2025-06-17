@@ -14,10 +14,16 @@ public partial class SettingsViewModel : ViewModelBase
 
     public SettingsViewModel(IOsThemeService osThemeService)
     {
-        _themeService = new ThemeService();
+        _themeService = new ThemeService(osThemeService);
         OsThemeService = osThemeService;
         _selectedTheme = _themeService.LoadTheme();
     }
+    
+    public bool IsLight => SelectedTheme == "Light";
+
+    public bool IsDark => SelectedTheme == "Dark";
+
+    public bool IsSystem => SelectedTheme == "System";
 
     [RelayCommand]
     private void SetTheme(string theme)

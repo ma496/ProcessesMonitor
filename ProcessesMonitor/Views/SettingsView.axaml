@@ -3,21 +3,17 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:viewModels="clr-namespace:ProcessesMonitor.ViewModels"
-             xmlns:converters="clr-namespace:ProcessesMonitor.Converters"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="ProcessesMonitor.Views.SettingsView"
              x:DataType="viewModels:SettingsViewModel">
-    <UserControl.Resources>
-        <converters:ObjectToStringEqualsConverter x:Key="ObjectToStringEqualsConverter" />
-    </UserControl.Resources>
     <StackPanel Spacing="5" Margin="10">
         <TextBlock Text="Theme" FontWeight="Bold"/>
         <RadioButton Content="Light" Command="{Binding SetThemeCommand}" CommandParameter="Light" GroupName="Theme"
-                     IsChecked="{Binding SelectedTheme, Converter={StaticResource ObjectToStringEqualsConverter}, ConverterParameter=Light}"/>
+                     IsChecked="{Binding IsLight}"/>
         <RadioButton Content="Dark" Command="{Binding SetThemeCommand}" CommandParameter="Dark" GroupName="Theme"
-                     IsChecked="{Binding SelectedTheme, Converter={StaticResource ObjectToStringEqualsConverter}, ConverterParameter=Dark}"/>
+                     IsChecked="{Binding IsDark}"/>
         <RadioButton Content="Follow System" Command="{Binding SetThemeCommand}" CommandParameter="System" GroupName="Theme"
-                     IsChecked="{Binding SelectedTheme, Converter={StaticResource ObjectToStringEqualsConverter}, ConverterParameter=System}"/>
+                     IsChecked="{Binding IsSystem}"/>
         
         <TextBlock Text="OS Theme" FontWeight="Bold" Margin="0,10,0,0"/>
         <StackPanel IsVisible="{Binding OsThemeService.IsSupported}">

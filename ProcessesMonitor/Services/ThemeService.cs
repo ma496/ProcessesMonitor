@@ -9,6 +9,12 @@ namespace ProcessesMonitor.Services;
 public class ThemeService
 {
     private const string SettingsFile = "settings.json";
+    private readonly IOsThemeService _osThemeService;
+
+    public ThemeService(IOsThemeService osThemeService)
+    {
+        _osThemeService = osThemeService;
+    }
 
     public void ApplyTheme(string theme)
     {
@@ -16,7 +22,8 @@ public class ThemeService
         if (app != null)
         {
             app.RequestedThemeVariant = theme == "Dark" ? ThemeVariant.Dark 
-                : theme == "Light" ? ThemeVariant.Light : ThemeVariant.Default;
+                : theme == "Light" ? ThemeVariant.Light 
+                : _osThemeService.IsLightTheme() ? ThemeVariant.Light : ThemeVariant.Dark;
         }
     }
 

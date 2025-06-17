@@ -3,7 +3,10 @@
   <component name="AvaloniaProject">
     <option name="projectPerEditor">
       <map>
+        <entry key="ProcessesMonitor/App.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
         <entry key="ProcessesMonitor/Views/MainWindow.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
+        <entry key="ProcessesMonitor/Views/ProcessMonitorView.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
+        <entry key="ProcessesMonitor/Views/SettingsView.axaml" value="ProcessesMonitor/ProcessesMonitor.csproj" />
       </map>
     </option>
   </component>
