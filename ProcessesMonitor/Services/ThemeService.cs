@@ -14,8 +14,6 @@ public class ThemeService
     public ThemeService(IOsThemeService osThemeService)
     {
         _osThemeService = osThemeService;
-        var theme = LoadTheme();
-        ApplyTheme(theme);
     }
 
     public void ApplyTheme(string theme)

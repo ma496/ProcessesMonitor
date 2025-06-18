@@ -1,5 +1,4 @@
-﻿using System.Runtime.InteropServices;
-using ProcessesMonitor.Services;
+﻿using ProcessesMonitor.Services;
 
 namespace ProcessesMonitor.ViewModels;
 
@@ -8,21 +7,12 @@ public class MainWindowViewModel : ViewModelBase
     public ProcessesMonitorViewModel ProcessesMonitor { get; }
     public SettingsViewModel Settings { get; }
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(ProcessesMonitorViewModel processesMonitor, SettingsViewModel settings,
+        ThemeService themeService)
     {
-        ProcessesMonitor = new ProcessesMonitorViewModel();
-        
-        IOsThemeService osThemeService;
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-        {
-            osThemeService = new WindowsOsThemeService();
-        }
-        else
-        {
-            // Placeholder for other OSes
-            osThemeService = new DummyOsThemeService();
-        }
-
-        Settings = new SettingsViewModel(osThemeService);
+        ProcessesMonitor = processesMonitor;
+        Settings = settings;
+        var theme = themeService.LoadTheme();
+        themeService.ApplyTheme(theme);
     }
 }

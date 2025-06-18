@@ -1,11 +1,14 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
 using Avalonia.Markup.Xaml;
 using ProcessesMonitor.ViewModels;
 using ProcessesMonitor.Views;
+using Microsoft.Extensions.DependencyInjection;
+using System;
+using ProcessesMonitor.Services;
+using System.Runtime.InteropServices;
 
 namespace ProcessesMonitor;
 
@@ -14,6 +17,33 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+    }
+
+    public new static App Current => (App)Application.Current!;
+
+    public IServiceProvider ServiceProvider { get; } = ConfigureServices();
+
+    private static IServiceProvider ConfigureServices()
+    {
+        var services = new ServiceCollection();
+
+        // configure services
+        services.AddSingleton<ThemeService>();
+        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        {
+            services.AddSingleton<IOsThemeService, WindowsOsThemeService>();
+        }
+        else
+        {
+            services.AddSingleton<IOsThemeService, DummyOsThemeService>();
+        }
+
+        // configure view models
+        services.AddSingleton<MainWindowViewModel>();
+        services.AddSingleton<ProcessesMonitorViewModel>();
+        services.AddSingleton<SettingsViewModel>();
+
+        return services.BuildServiceProvider();
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -25,7 +55,7 @@ public partial class App : Application
             DisableAvaloniaDataAnnotationValidation();
             desktop.MainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>()
             };
         }
 
