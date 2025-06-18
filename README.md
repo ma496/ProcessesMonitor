@@ -8,6 +8,17 @@ A simple cross-platform application to monitor system processes. Built with Aval
 - See details for each process like PID, name, memory usage, and CPU usage.
 - More to come.
 
+## Screenshots
+
+### Main Window
+![Processes Monitor](ProcessesMonitor/Assets/ProcessesMonitor.png)
+
+### Settings
+![Settings](ProcessesMonitor/Assets/Settings.png)
+
+### About
+![About](ProcessesMonitor/Assets/About.png)
+
 ## Build Instructions
 
 To build this project, you will need the [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0).
