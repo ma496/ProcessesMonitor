@@ -33,6 +33,14 @@ public partial class App : Application
         {
             services.AddSingleton<IOsThemeService, WindowsOsThemeService>();
         }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        {
+            services.AddSingleton<IOsThemeService, MacOsThemeService>();
+        }
+        else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
+        {
+            services.AddSingleton<IOsThemeService, LinuxOsThemeService>();
+        }
         else
         {
             services.AddSingleton<IOsThemeService, DummyOsThemeService>();
