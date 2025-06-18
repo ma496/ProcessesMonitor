@@ -119,10 +119,32 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
                     ? (double)totalMemoryUsageBytes / _totalPhysicalMemory * 100.0
                     : 0;
 
-                _processesCollection.Clear();
-                foreach (var process in newProcesses)
+                var newProcessesDict = newProcesses.ToDictionary(p => p.Pid);
+                var existingProcessesDict = _processesCollection.ToDictionary(p => p.Pid);
+
+                var pidsToRemove = existingProcessesDict.Keys.Except(newProcessesDict.Keys).ToList();
+                foreach (var pid in pidsToRemove)
                 {
-                    _processesCollection.Add(process);
+                    if (existingProcessesDict.TryGetValue(pid, out var processToRemove))
+                    {
+                        _processesCollection.Remove(processToRemove);
+                    }
+                }
+                
+                foreach (var newProcess in newProcesses)
+                {
+                    if (existingProcessesDict.TryGetValue(newProcess.Pid, out var existingProcess))
+                    {
+                        var index = _processesCollection.IndexOf(existingProcess);
+                        if (index != -1)
+                        {
+                            _processesCollection[index] = newProcess;
+                        }
+                    }
+                    else
+                    {
+                        _processesCollection.Add(newProcess);
+                    }
                 }
             });
         }
