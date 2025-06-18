@@ -14,7 +14,7 @@ To build this project, you will need the [.NET 9 SDK](https://dotnet.microsoft.c
 
 1.  Clone the repository:
     ```bash
-    git clone https://github.com/your-username/ProcessesMonitor.git
+    git clone https://github.com/ma496/ProcessesMonitor.git
     cd ProcessesMonitor
     ```
 

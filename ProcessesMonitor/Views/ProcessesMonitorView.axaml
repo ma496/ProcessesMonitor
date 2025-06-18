@@ -8,8 +8,8 @@
              x:DataType="viewModels:ProcessesMonitorViewModel">
     <StackPanel>
         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
-            <TextBlock Text="{Binding Interval, StringFormat='Update Interval: {0} seconds'}" Margin="5"/>
-            <TextBlock Text="{Binding Processes.Count, StringFormat='Total Processes: {0}'}" Margin="5"/>
+            <TextBlock Text="{Binding Interval, StringFormat='Update Interval: {0} seconds'}" Margin="5" VerticalAlignment="Center"/>
+            <TextBlock Text="{Binding Processes.Count, StringFormat='Total Processes: {0}'}" Margin="5" VerticalAlignment="Center"/>
             <Button Content="Export to CSV" Command="{Binding ExportToCsvCommand}" HorizontalAlignment="Right" Margin="5"/>
         </StackPanel>
         <DataGrid 
