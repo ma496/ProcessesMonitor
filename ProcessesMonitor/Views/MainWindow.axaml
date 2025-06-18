@@ -9,7 +9,7 @@
         x:Class="ProcessesMonitor.Views.MainWindow"
         x:DataType="viewModels:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
-        Title="SystemMonitor">
+        Title="System Monitor">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -23,6 +23,9 @@
         </TabItem>
         <TabItem Header="Settings">
             <views:SettingsView DataContext="{Binding Settings}"/>
+        </TabItem>
+        <TabItem Header="About">
+            <views:AboutView DataContext="{Binding About}"/>
         </TabItem>
     </TabControl>
 

@@ -7,24 +7,51 @@
              x:Class="ProcessesMonitor.Views.ProcessesMonitorView"
              x:DataType="viewModels:ProcessesMonitorViewModel">
     <StackPanel>
-        <Button Content="Export to CSV" Command="{Binding ExportToCsvCommand}" HorizontalAlignment="Right" Margin="5"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+            <TextBlock Text="{Binding Interval, StringFormat='Update Interval: {0} seconds'}" Margin="5"/>
+            <TextBlock Text="{Binding Processes.Count, StringFormat='Total Processes: {0}'}" Margin="5"/>
+            <Button Content="Export to CSV" Command="{Binding ExportToCsvCommand}" HorizontalAlignment="Right" Margin="5"/>
+        </StackPanel>
         <DataGrid 
-            ItemsSource="{Binding Processes, Mode=TwoWay}" 
+            ItemsSource="{Binding Processes}" 
             AutoGenerateColumns="False" 
-            IsReadOnly="True">
+            IsReadOnly="True"
+            GridLinesVisibility="All">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Process Name" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="Auto"/>
-                <DataGridTextColumn Binding="{Binding CpuUsage, StringFormat={}{0:F2}}" Width="Auto">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="{Binding $parent[UserControl].DataContext.TotalCpuUsagePercentage, StringFormat='CPU ({0:F2} %)'}"/>
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
-                <DataGridTextColumn Binding="{Binding MemoryUsage, StringFormat={}{0:F2}}" Width="Auto">
-                    <DataGridTextColumn.Header>
-                        <TextBlock Text="{Binding $parent[UserControl].DataContext.TotalMemoryUsagePercentage, StringFormat='Memory (MB) ({0:F2} %)'}"/>
-                    </DataGridTextColumn.Header>
-                </DataGridTextColumn>
+                <DataGridTemplateColumn Header="Process Name" SortMemberPath="Name" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="viewModels:ProcessInfo">
+                            <TextBlock Text="{Binding Name}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Header="PID" SortMemberPath="Pid" Width="Auto">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="viewModels:ProcessInfo">
+                            <TextBlock Text="{Binding Pid}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn SortMemberPath="CpuUsage" Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="{Binding TotalCpuUsagePercentage, StringFormat='CPU ({0:F2} %)', FallbackValue=0.0}"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="viewModels:ProcessInfo">
+                            <TextBlock Text="{Binding CpuUsage, StringFormat={}{0:F2}}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn SortMemberPath="MemoryUsage" Width="Auto">
+                    <DataGridTemplateColumn.Header>
+                        <TextBlock Text="{Binding TotalMemoryUsagePercentage, StringFormat='Memory (MB) ({0:F2} %)', FallbackValue=0.0}"/>
+                    </DataGridTemplateColumn.Header>
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate x:DataType="viewModels:ProcessInfo">
+                            <TextBlock Text="{Binding MemoryUsage, StringFormat={}{0:F2}}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
             </DataGrid.Columns>
         </DataGrid>
     </StackPanel>

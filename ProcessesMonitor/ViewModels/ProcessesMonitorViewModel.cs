@@ -10,6 +10,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsvHelper;
+using Avalonia.Collections;
 
 namespace ProcessesMonitor.ViewModels;
 
@@ -19,36 +20,43 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
     private readonly Dictionary<int, (TimeSpan, DateTime)> _cpuUsageCache = [];
     private readonly long _totalPhysicalMemory;
 
-    [ObservableProperty]
-    private ObservableCollection<ProcessInfo> _processes = [];
+    private readonly ObservableCollection<ProcessInfo> _processesCollection = [];
+    public DataGridCollectionView Processes { get; }
 
     [ObservableProperty]
-    private double _totalCpuUsagePercentage; // In percentage
+    private double _totalCpuUsagePercentage;
 
     [ObservableProperty]
-    private double _totalMemoryUsagePercentage; // In percentage
+    private double _totalMemoryUsagePercentage;
+
+    private readonly Random _random = new();
+
+    [ObservableProperty]
+    private int _interval;
 
     public ProcessesMonitorViewModel()
     {
+        Processes = new DataGridCollectionView(_processesCollection);
         _totalPhysicalMemory = GC.GetGCMemoryInfo().TotalAvailableMemoryBytes;
-        
-        Task.Run(LoadProcesses);
 
+        LoadProcesses();
+
+        Interval = _random.Next(3, 6);
         _timer = new DispatcherTimer
         {
-            Interval = TimeSpan.FromSeconds(2)
+            Interval = TimeSpan.FromSeconds(Interval)
         };
-        _timer.Tick += (_, _) => Task.Run(LoadProcesses);
+        _timer.Tick += (_, _) => LoadProcesses();
         _timer.Start();
     }
 
-    private async Task LoadProcesses()
+    private void LoadProcesses()
     {
         try
         {
             var processList = Process.GetProcesses();
             var now = DateTime.Now;
-            
+
             var newProcesses = new List<ProcessInfo>(processList.Length);
             long totalMemoryUsageBytes = 0;
             double cumulativeCpuUsage = 0;
@@ -57,6 +65,7 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
             {
                 try
                 {
+                    // calculate cpu usage
                     double cpu = 0.0;
                     if (_cpuUsageCache.TryGetValue(process.Id, out var previous))
                     {
@@ -80,12 +89,11 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
                     {
                         Pid = process.Id,
                         Name = process.ProcessName,
-                        // --- KEY CHANGE ---
                         // Convert to MB before storing in the ProcessInfo object
                         MemoryUsage = memoryUsageBytes / (1024.0 * 1024.0),
                         CpuUsage = cpu
                     });
-                    
+
                     _cpuUsageCache[process.Id] = (process.TotalProcessorTime, now);
                 }
                 catch (Exception)
@@ -93,7 +101,8 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
                     _cpuUsageCache.Remove(process.Id);
                 }
             }
-            
+
+            // remove cpu usage cache for processes that are no longer running
             var runningPids = new HashSet<int>(newProcesses.Select(p => p.Pid));
             var exitedPids = _cpuUsageCache.Keys.Where(pid => !runningPids.Contains(pid)).ToList();
             foreach (var pid in exitedPids)
@@ -101,21 +110,39 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
                 _cpuUsageCache.Remove(pid);
             }
 
-            var sortedProcesses = newProcesses.OrderByDescending(p => p.CpuUsage).ToList();
-
-            // Calculate total usage percentages
-            TotalCpuUsagePercentage = cumulativeCpuUsage;
-            TotalCpuUsagePercentage = Math.Min(100, TotalCpuUsagePercentage);
-            TotalMemoryUsagePercentage = _totalPhysicalMemory > 0
-                ? (double)totalMemoryUsageBytes / _totalPhysicalMemory * 100.0
-                : 0;
-
-            await Dispatcher.UIThread.InvokeAsync(() =>
+            Dispatcher.UIThread.Post(() =>
             {
-                Processes.Clear();
-                foreach (var process in sortedProcesses)
+                // Calculate total usage percentages
+                TotalCpuUsagePercentage = cumulativeCpuUsage;
+                TotalCpuUsagePercentage = Math.Min(100, TotalCpuUsagePercentage);
+                TotalMemoryUsagePercentage = _totalPhysicalMemory > 0
+                    ? (double)totalMemoryUsageBytes / _totalPhysicalMemory * 100.0
+                    : 0;
+
+                // update Processes based on id, if not found, add it
+                foreach (var process in newProcesses)
                 {
-                    Processes.Add(process);
+                    var existingProcess = _processesCollection.FirstOrDefault(p => p.Pid == process.Pid);
+                    if (existingProcess != null)
+                    {
+                        // update the process
+                        existingProcess.MemoryUsage = process.MemoryUsage;
+                        existingProcess.CpuUsage = process.CpuUsage;
+                    }
+                    else
+                    {
+                        _processesCollection.Add(process);
+                    }
+                }
+
+                // remove processes that are no longer running
+                foreach (var pid in exitedPids)
+                {
+                    var process = _processesCollection.FirstOrDefault(p => p.Pid == pid);
+                    if (process != null)
+                    {
+                        _processesCollection.Remove(process);
+                    }
                 }
             });
         }
@@ -133,21 +160,21 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
         await using var writer = new StreamWriter(path);
         await using var csv = new CsvWriter(writer, CultureInfo.InvariantCulture);
 
-        var records = Processes.Select(p => new
+        var records = _processesCollection.Select(p => new
         {
             p.Pid,
             p.Name,
             CpuUsage = p.CpuUsageDisplay,
             MemoryUsage = p.MemoryUsageDisplay
         });
-        
+
         await csv.WriteRecordsAsync(records);
     }
 
     public void Dispose()
     {
         _timer.Stop();
-        Processes.Clear();
+        _processesCollection.Clear();
         _cpuUsageCache.Clear();
         GC.SuppressFinalize(this);
     }
@@ -160,7 +187,7 @@ public partial class ProcessInfo : ViewModelBase
 
     [ObservableProperty]
     private string _name = "";
-    
+
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(MemoryUsageDisplay))]
     private double _memoryUsage; // in MB
@@ -170,6 +197,6 @@ public partial class ProcessInfo : ViewModelBase
     private double _cpuUsage; // as a percentage
 
     public string CpuUsageDisplay => $"{CpuUsage:F2} %";
-    
+
     public string MemoryUsageDisplay => $"{MemoryUsage:F2} MB";
 }
