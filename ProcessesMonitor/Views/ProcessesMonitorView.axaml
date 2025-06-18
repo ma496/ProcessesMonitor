@@ -15,8 +15,16 @@
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Process Name" Binding="{Binding Name}" Width="*"/>
                 <DataGridTextColumn Header="PID" Binding="{Binding Pid}" Width="Auto"/>
-                <DataGridTextColumn Header="CPU (%)" Binding="{Binding CpuUsage, StringFormat={}{0:F2}}" Width="Auto"/>
-                <DataGridTextColumn Header="Memory (MB)" Binding="{Binding MemoryUsage, StringFormat={}{0:F2}}" Width="Auto"/>
+                <DataGridTextColumn Binding="{Binding CpuUsage, StringFormat={}{0:F2}}" Width="Auto">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="{Binding $parent[UserControl].DataContext.TotalCpuUsagePercentage, StringFormat='CPU ({0:F2} %)'}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
+                <DataGridTextColumn Binding="{Binding MemoryUsage, StringFormat={}{0:F2}}" Width="Auto">
+                    <DataGridTextColumn.Header>
+                        <TextBlock Text="{Binding $parent[UserControl].DataContext.TotalMemoryUsagePercentage, StringFormat='Memory (MB) ({0:F2} %)'}"/>
+                    </DataGridTextColumn.Header>
+                </DataGridTextColumn>
             </DataGrid.Columns>
         </DataGrid>
     </StackPanel>

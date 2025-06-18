@@ -104,7 +104,8 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
             var sortedProcesses = newProcesses.OrderByDescending(p => p.CpuUsage).ToList();
 
             // Calculate total usage percentages
-            TotalCpuUsagePercentage = cumulativeCpuUsage / Environment.ProcessorCount;
+            TotalCpuUsagePercentage = cumulativeCpuUsage;
+            TotalCpuUsagePercentage = Math.Min(100, TotalCpuUsagePercentage);
             TotalMemoryUsagePercentage = _totalPhysicalMemory > 0
                 ? (double)totalMemoryUsageBytes / _totalPhysicalMemory * 100.0
                 : 0;
@@ -148,7 +149,6 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
         _timer.Stop();
         Processes.Clear();
         _cpuUsageCache.Clear();
-        Debug.WriteLine("ProcessMonitorViewModel disposed");
         GC.SuppressFinalize(this);
     }
 }
