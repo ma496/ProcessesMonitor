@@ -119,30 +119,10 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
                     ? (double)totalMemoryUsageBytes / _totalPhysicalMemory * 100.0
                     : 0;
 
-                // update Processes based on id, if not found, add it
+                _processesCollection.Clear();
                 foreach (var process in newProcesses)
                 {
-                    var existingProcess = _processesCollection.FirstOrDefault(p => p.Pid == process.Pid);
-                    if (existingProcess != null)
-                    {
-                        // update the process
-                        existingProcess.MemoryUsage = process.MemoryUsage;
-                        existingProcess.CpuUsage = process.CpuUsage;
-                    }
-                    else
-                    {
-                        _processesCollection.Add(process);
-                    }
-                }
-
-                // remove processes that are no longer running
-                foreach (var pid in exitedPids)
-                {
-                    var process = _processesCollection.FirstOrDefault(p => p.Pid == pid);
-                    if (process != null)
-                    {
-                        _processesCollection.Remove(process);
-                    }
+                    _processesCollection.Add(process);
                 }
             });
         }
