@@ -11,6 +11,8 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CsvHelper;
 using Avalonia.Collections;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 
 namespace ProcessesMonitor.ViewModels;
 
@@ -130,7 +132,7 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
                         _processesCollection.Remove(processToRemove);
                     }
                 }
-                
+
                 foreach (var newProcess in newProcesses)
                 {
                     if (existingProcessesDict.TryGetValue(newProcess.Pid, out var existingProcess))
@@ -171,6 +173,9 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
         });
 
         await csv.WriteRecordsAsync(records);
+
+        var box = MessageBoxManager.GetMessageBoxStandard("Exported to CSV", $"Processes exported to {path}", ButtonEnum.Ok);
+        await box.ShowAsync();
     }
 
     public void Dispose()
