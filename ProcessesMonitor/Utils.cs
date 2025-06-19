@@ -3,6 +3,8 @@ using Avalonia.Controls;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Dto;
 using MsBox.Avalonia.Enums;
+using System;
+using Avalonia.Threading;
 
 namespace ProcessesMonitor;
 
@@ -31,5 +33,20 @@ public static class Utils
             WindowStartupLocation = WindowStartupLocation.CenterScreen
         });
         await box.ShowAsync();
+    }
+
+    public static void HandleException(Exception? e)
+    {
+        if (e == null) return;
+
+        // Log to console/debug output
+        System.Diagnostics.Debug.WriteLine("An unhandled exception occurred:");
+        System.Diagnostics.Debug.WriteLine(e.ToString());
+
+        // Show a message box on the UI thread
+        Dispatcher.UIThread.Post(async () =>
+        {
+            await ShowErrorAsync("Unhandled Exception", e.Message);
+        });
     }
 }

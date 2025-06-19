@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using ProcessesMonitor.Services;
 using System.Runtime.InteropServices;
+using Avalonia.Threading;
 
 namespace ProcessesMonitor;
 
@@ -62,6 +63,12 @@ public partial class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
+            Dispatcher.UIThread.UnhandledException += (_, e) =>
+            {
+                // Mark as handled to prevent the AppDomain handler from firing.
+                e.Handled = true;
+                Utils.HandleException(e.Exception);
+            };
             desktop.MainWindow = new MainWindow
             {
                 DataContext = ServiceProvider.GetRequiredService<MainWindowViewModel>()

@@ -62,6 +62,11 @@ public partial class ProcessesMonitorViewModel : ViewModelBase, IDisposable
             _timer.Stop();
             await Utils.ShowErrorAsync("Error", $"An security error occurred while loading processes: {ex}");
         }
+        catch (Exception ex)
+        {
+            _timer.Stop();
+            await Utils.ShowErrorAsync("Error", $"An error occurred while loading processes: {ex}");
+        }
     }
 
     private void LoadProcesses()
