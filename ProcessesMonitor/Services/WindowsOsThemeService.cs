@@ -1,5 +1,6 @@
 using System.Runtime.Versioning;
 using System.Security;
+using System.Threading.Tasks;
 using Microsoft.Win32;
 
 namespace ProcessesMonitor.Services;
@@ -12,7 +13,7 @@ public class WindowsOsThemeService : IOsThemeService
     private const string AppsUseLightTheme = "AppsUseLightTheme";
     private const string SystemUsesLightTheme = "SystemUsesLightTheme";
 
-    public void SetTheme(string theme)
+    public async Task SetThemeAsync(string theme)
     {
         try
         {
@@ -20,13 +21,13 @@ public class WindowsOsThemeService : IOsThemeService
             Registry.SetValue(RegistryKeyPath, AppsUseLightTheme, value, RegistryValueKind.DWord);
             Registry.SetValue(RegistryKeyPath, SystemUsesLightTheme, value, RegistryValueKind.DWord);
         }
-        catch (SecurityException)
+        catch (SecurityException ex)
         {
-            // Handle insufficient permissions
+            await Utils.ShowErrorAsync("Error", $"An security error occurred while setting the Windows OS theme: {ex}");
         }
     }
 
-    public bool IsLightTheme()
+    public async Task<bool> IsLightThemeAsync()
     {
         try
         {
@@ -41,9 +42,9 @@ public class WindowsOsThemeService : IOsThemeService
                 return registryValue == 1;
             }
         }
-        catch (SecurityException)
+        catch (SecurityException ex)
         {
-            // Handle insufficient permissions
+            await Utils.ShowErrorAsync("Error", $"An security error occurred while checking the Windows OS theme: {ex}");
         }
         
         // Default to light theme if the key is not found or in case of an error.

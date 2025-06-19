@@ -16,7 +16,7 @@ public class ThemeService
         _osThemeService = osThemeService;
     }
 
-    public void ApplyTheme(string theme)
+    public async void ApplyTheme(string theme)
     {
         var app = Application.Current;
         if (app != null)
@@ -27,7 +27,7 @@ public class ThemeService
 
             app.RequestedThemeVariant = theme == "Dark" ? ThemeVariant.Dark 
                 : theme == "Light" ? ThemeVariant.Light 
-                : _osThemeService.IsLightTheme() ? ThemeVariant.Light : ThemeVariant.Dark;
+                : await _osThemeService.IsLightThemeAsync() ? ThemeVariant.Light : ThemeVariant.Dark;
         }
     }
 

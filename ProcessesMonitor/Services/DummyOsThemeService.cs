@@ -1,14 +1,16 @@
+using System.Threading.Tasks;
+
 namespace ProcessesMonitor.Services;
 
 public class DummyOsThemeService : IOsThemeService
 {
     public bool IsSupported => false;
-    public void SetTheme(string theme)
+    public Task SetThemeAsync(string theme)
     {
-        // Do nothing
+        throw new System.NotImplementedException();
     }
 
-    public bool IsLightTheme()
+    public Task<bool> IsLightThemeAsync()
     {
         throw new System.NotImplementedException();
     }

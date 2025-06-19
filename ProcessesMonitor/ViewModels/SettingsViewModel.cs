@@ -1,8 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ProcessesMonitor.Services;
-using MsBox.Avalonia;
-using MsBox.Avalonia.Enums;
 using System.Threading.Tasks;
 
 namespace ProcessesMonitor.ViewModels;
@@ -38,13 +36,12 @@ public partial class SettingsViewModel : ViewModelBase
     [RelayCommand]
     private async Task SetOsTheme(string theme)
     {
-        OsThemeService.SetTheme(theme);
+        await OsThemeService.SetThemeAsync(theme);
         if (SelectedTheme == "System")
         {
             _themeService.ApplyTheme(theme);
         }
 
-        var box = MessageBoxManager.GetMessageBoxStandard("OS Theme", $"OS Theme applied: {theme}", ButtonEnum.Ok);
-        await box.ShowAsync();
+        await Utils.ShowMessageAsync("OS Theme", $"OS Theme applied: {theme}");
     }
 } 

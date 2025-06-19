@@ -1,8 +1,10 @@
+using System.Threading.Tasks;
+
 namespace ProcessesMonitor.Services;
 
 public interface IOsThemeService
 {
     bool IsSupported { get; }
-    void SetTheme(string theme);
-    bool IsLightTheme();
+    Task SetThemeAsync(string theme);
+    Task<bool> IsLightThemeAsync();
 } 
